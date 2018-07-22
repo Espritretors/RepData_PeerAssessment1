@@ -7,10 +7,17 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 library(ggplot2)
 library(timeDate)
+```
 
+```
+## Warning: package 'timeDate' was built under R version 3.5.1
+```
+
+```r
 #File download. If file does not exist, download to working directory.
 if(!file.exists("activity.zip"))
 {download.file("https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip", "activity.zip",mode = "wb")}
@@ -24,7 +31,8 @@ activity <- read.csv(file="activity.csv", header=TRUE)
 
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 # Calculate total steps per day
 totsteps <- aggregate(steps ~ date, activity, sum, na.rm=TRUE)
 
@@ -33,14 +41,30 @@ hist(totsteps$steps,
      breaks=seq(0, 25000,2500),
      main = "Total Steps per Day",
      xlab = "Steps")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 # Mean and median of total steps taken per day
 mean(totsteps$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(totsteps$steps)
 ```
 
+```
+## [1] 10765
+```
+
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 # Calculate mean steps per interval
 mean_steps <- aggregate(steps ~ interval, activity, mean, na.rm=TRUE)
 
@@ -50,13 +74,23 @@ ggplot(mean_steps, aes(x = interval, y = steps)) +
   ggtitle("Daily Activity Pattern") +
   xlab("Interval (5 minutes)") +
   ylab("Average Number of Steps")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 # Interval with maximum number of steps
 mean_steps[which.max(mean_steps$steps),]
 ```
 
+```
+##     interval    steps
+## 104      835 206.1698
+```
+
 ## Imputing missing values
-```{r}
+
+```r
 # Find missing values
 missing <- is.na(activity$steps)
 
@@ -71,19 +105,48 @@ hist(totsteps2$steps,
      breaks=seq(0, 25000,2500),
      main = "Total Steps per Day (imputed data)",
      xlab = "Steps")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+```r
 # Mean and median of total steps taken per day (imputed data)
 mean(totsteps2$steps)
-median(totsteps2$steps)
+```
 
+```
+## [1] 10766.19
+```
+
+```r
+median(totsteps2$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 #Differences (mean and median) with non imputed dataset
 mean(totsteps2$steps) - mean(totsteps$steps)
+```
+
+```
+## [1] 0
+```
+
+```r
 median(totsteps2$steps) - median(totsteps$steps)
+```
+
+```
+## [1] 1.188679
 ```
 The mean is the same for the imputed and non-imputed datasets but the median is slightly higher (1.189) for the imputed dataset.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r}
+
+```r
 # Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day
 newactivity$date <- as.Date(newactivity$date)
 newactivity$day <- ifelse(isWeekday(newactivity$date)==TRUE, "weekday", "weekend")
@@ -97,3 +160,5 @@ ggplot(meanstepsbydaytype, aes(interval, steps)) +
   labs(x="Interval (5 minutes)", y=expression("Average Number of Steps")) + 
   labs(title=expression("Daily Activity Pattern: Weekdays vs Weekends"))
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
